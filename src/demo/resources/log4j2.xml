@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" packages="backtrace.io.log4j2">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+        </Console>
+        <BacktraceAppender name="BacktraceAppender" endpointUrl="endpoint-url" submissionToken="submission-token" useDatabase="false"/>
+    </Appenders>
+    <Loggers>
+        <Logger name="backtrace.io" level="debug" additivity="true"/>
+        <Root level="debug">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="BacktraceAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>
