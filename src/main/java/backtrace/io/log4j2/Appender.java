@@ -53,7 +53,8 @@ public class Appender extends AbstractAppender {
             @PluginAttribute(value = "useDatabase") boolean useDatabase,
             @PluginAttribute(value = "maxDatabaseSize", defaultLong = -1) long maxDatabaseSize, // -1 is unlimited
             @PluginAttribute(value = "maxDatabaseRecordCount", defaultInt = -1) int maxDatabaseRecordCount, // -1 is unlimited
-            @PluginAttribute(value = "maxDatabaseRetryLimit", defaultInt = 3) int maxDatabaseRetryLimit
+            @PluginAttribute(value = "maxDatabaseRetryLimit", defaultInt = 3) int maxDatabaseRetryLimit,
+            @PluginAttribute(value = "uncaughtExceptionHandlerBlockThread") Boolean uncaughtExceptionHandlerBlockThread
     ) {
         if (name == null) {
             LOGGER.error("No name provided for BacktraceAppender");
@@ -64,7 +65,7 @@ public class Appender extends AbstractAppender {
                 useDatabase, maxDatabaseSize,
                 maxDatabaseRecordCount, maxDatabaseRetryLimit);
 
-        BacktraceClient backtraceClient = Appender.createBacktraceClient(backtraceConfig, enableUncaughtExceptionHandler, appName, appVersion);
+        BacktraceClient backtraceClient = Appender.createBacktraceClient(backtraceConfig, enableUncaughtExceptionHandler, appName, appVersion, uncaughtExceptionHandlerBlockThread);
 
         return new Appender(backtraceClient, name, filter, layout, true, null);
     }
@@ -175,11 +176,11 @@ public class Appender extends AbstractAppender {
      * @param appVersion                       application version
      * @return configured Backtrace Client instance
      */
-    static BacktraceClient createBacktraceClient(BacktraceConfig config, boolean isEnableUncaughtExceptionHandler, String appName, String appVersion) {
+    static BacktraceClient createBacktraceClient(BacktraceConfig config, boolean isEnableUncaughtExceptionHandler, String appName, String appVersion, Boolean uncaughtExceptionHandlerBlockThread) {
 
         BacktraceClient client = new BacktraceClient(config);
         if (isEnableUncaughtExceptionHandler) {
-            client.enableUncaughtExceptionsHandler();
+            client.enableUncaughtExceptionsHandler(uncaughtExceptionHandlerBlockThread);
         }
 
         if (isStringNotEmpty(appName)) {
