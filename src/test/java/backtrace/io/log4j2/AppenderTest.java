@@ -80,22 +80,21 @@ public class AppenderTest {
         });
 
         // WHEN
-        final Thread testingThread = new Thread(() -> {
+        final Thread testThread = new Thread(() -> {
             Logger logger = (Logger) LogManager.getLogger("another-thread");
             appender.start();
             logger.addAppender(appender);
             throw new RuntimeException("Expected!");
         });
-        testingThread.start();
+        testThread.start();
 
         // THEN
         try {
-            testingThread.join();
+            testThread.join();
             waiter.await(2, TimeUnit.SECONDS);
         } catch (InterruptedException | TimeoutException exception) {
             Assert.fail(exception.getMessage());
         }
         appender.stop();
-        testingThread.interrupt();
     }
 }
