@@ -9,7 +9,7 @@
 * Gradle
 ```
 dependencies {
-    implementation 'com.github.backtrace-labs.backtrace-log4j2:backtrace-log4j2:0.9.0'
+    implementation 'com.github.backtrace-labs.backtrace-log4j2:backtrace-log4j2:0.9.1'
 }
 ```
 
@@ -18,7 +18,7 @@ dependencies {
 <dependency>
   <groupId>com.github.backtrace-labs.backtrace-log4j2</groupId>
   <artifactId>backtrace-log4j2</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1</version>
 </dependency>
 ```
 
@@ -55,6 +55,7 @@ In order to configure the BacktraceAppender, it is mandatory to set the `submiss
 - `maxDatabaseSize` - long value, maximum database size in bytes, by default size is unlimited
 - `maxDatabaseRecordCount` - integer value, number of times library will try to send the error report again if sending will finished with fail
 - `maxDatabaseRetryLimit` - integer value, maximum number of messages in database. If a limit is set, the oldest error reports will be deleted if there will be try to exceed the limit
+- `uncaughtExceptionHandlerBlockThread` - boolean value, if `true` thread should be blocked until unhandled exception will be sent
 
 
 # Waiting 
@@ -82,7 +83,7 @@ If you want to disable all logs which comes from this library add to log4j.prope
 <Logger name="backtrace.io" level="off" additivity="false"/>
 ```
 
-You can also set the level with which you want to receive logs from this library, eg. ERROR, INFORM or DEBUG.
+You can also set the level with which you want to receive logs from this library, eg. `ERROR`, `INFORM` or `DEBUG`.
 ```xml
 <Logger name="backtrace.io" level="error" additivity="true"/>
 ```
