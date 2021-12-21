@@ -1,8 +1,6 @@
 package backtrace.io.log4j2;
 
-import backtrace.io.data.BacktraceData;
 import backtrace.io.data.BacktraceReport;
-import backtrace.io.events.RequestHandler;
 import backtrace.io.http.BacktraceResult;
 import net.jodah.concurrentunit.Waiter;
 import org.apache.logging.log4j.Level;
@@ -25,9 +23,9 @@ public class AppenderTest {
         final String appenderName = null;
 
         // WHEN
-        Appender appender = Appender.createAppender(appenderName, null, null, null, null,
+        final Appender appender = Appender.createAppender(appenderName, null, null, null, null,
                 "https://backtrace.io/", false, null,
-                null, false, 0, 0, 0);
+                null, false, 0, 0, 0, false);
 
         // THEN
         Assert.assertNull(appender);
@@ -41,21 +39,18 @@ public class AppenderTest {
         final String appName = "backtrace-app";
         final String appVersion = "1.0.0";
 
-        Appender appender = AppenderMock.createAppender("backtrace", null, null, "https://backtrace.io/", "token",
+        final Appender appender = AppenderMock.createAppender("backtrace", null, null, "https://backtrace.io/", "token",
                 null, false, appVersion,
-                appName, false, 0, 0, 0);
+                appName, false, 0, 0, 0, false);
 
         // WHEN
-        appender.getBacktraceClient().setCustomRequestHandler(new RequestHandler() {
-            @Override
-            public BacktraceResult onRequest(BacktraceData data) {
-                // THEN
-                waiter.assertEquals(message, data.getReport().getMessage());
-                waiter.assertEquals(appName, data.getAttributes().get("application"));
-                waiter.assertEquals(appVersion, data.getAttributes().get("version"));
-                waiter.resume();
-                return BacktraceResult.onSuccess(data.getReport(), data.getReport().getMessage());
-            }
+        appender.getBacktraceClient().setCustomRequestHandler(data -> {
+            // THEN
+            waiter.assertEquals(message, data.getReport().getMessage());
+            waiter.assertEquals(appName, data.getAttributes().get("application"));
+            waiter.assertEquals(appVersion, data.getAttributes().get("version"));
+            waiter.resume();
+            return BacktraceResult.onSuccess(data.getReport(), data.getReport().getMessage());
         });
 
         final LogEvent logEvent = Log4jLogEvent.newBuilder()
@@ -75,27 +70,22 @@ public class AppenderTest {
     public void testUncaughtExceptionHandler() {
         // GIVEN
         final Waiter waiter = new Waiter();
-        Appender appender = AppenderMock.createAppender("backtrace", null, null, "https://backtrace.io/", "token",
+        final Appender appender = AppenderMock.createAppender("backtrace", null, null, "https://backtrace.io/", "token",
                 null, true, null,
-                null, false, 0, 0, 0);
+                null, false, 0, 0, 0, true);
 
-        appender.getBacktraceClient().setCustomRequestHandler(new RequestHandler() {
-            @Override
-            public BacktraceResult onRequest(BacktraceData data) {
-                waiter.resume();
-                return BacktraceResult.onSuccess(new BacktraceReport("test"), "test");
-            }
+        appender.getBacktraceClient().setCustomRequestHandler(data -> {
+            waiter.resume();
+            return BacktraceResult.onSuccess(new BacktraceReport("test"), "test");
         });
 
         // WHEN
-        Thread testThread = new Thread() {
-            public void run() {
-                Logger logger = (org.apache.logging.log4j.core.Logger) LogManager.getLogger("another-thread");
-                appender.start();
-                logger.addAppender(appender);
-                throw new RuntimeException("Expected!");
-            }
-        };
+        final Thread testThread = new Thread(() -> {
+            Logger logger = (Logger) LogManager.getLogger("another-thread");
+            appender.start();
+            logger.addAppender(appender);
+            throw new RuntimeException("Expected!");
+        });
         testThread.start();
 
         // THEN
