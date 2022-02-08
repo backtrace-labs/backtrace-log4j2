@@ -98,9 +98,29 @@ public class Appender extends AbstractAppender {
             return;
         }
 
+        System.out.println("Sending report with message " + logEvent.getMessage().getFormattedMessage());
         internalLogger.debug("Sending report with message " + logEvent.getMessage().getFormattedMessage());
         BacktraceReport report = createBacktraceReport(logEvent);
         this.getBacktraceClient().send(report);
+    }
+
+    @Override
+    public boolean stop(long timeout, TimeUnit timeUnit) {
+        System.out.println("Stop with params " + timeout + " " + timeUnit.toString());
+        System.out.println("Closing BacktraceAppender, awaiting:" + Appender.IS_AWAIT);
+        internalLogger.debug("Closing BacktraceAppender, awaiting:" + Appender.IS_AWAIT);
+        try {
+            if(Appender.IS_AWAIT) {
+                System.out.println("Await on messages..");
+            }
+                this.getBacktraceClient().await();
+//            }
+            System.out.println("Closing backtrace client..");
+            this.getBacktraceClient().close();
+        } catch (InterruptedException e) {
+            internalLogger.error("Error occurs during closing Backtrace client", e);
+        }
+        return super.stop(timeout, timeUnit);
     }
 
 
@@ -109,13 +129,14 @@ public class Appender extends AbstractAppender {
      */
     @Override
     public void stop() {
+        System.out.println("Stop without params");
         internalLogger.debug("Closing BacktraceAppender, awaiting:" + Appender.IS_AWAIT);
         try {
-            super.stop();
             this.getBacktraceClient().close();
         } catch (InterruptedException e) {
             internalLogger.error("Error occurs during closing Backtrace client", e);
         }
+        super.stop();
     }
 
 
