@@ -25,7 +25,7 @@ public class AppenderTest {
         // WHEN
         final Appender appender = Appender.createAppender(appenderName, null, null, null, null,
                 "https://backtrace.io/", false, null,
-                null, false, 0, 0, 0, false);
+                null, false, 0, 0, 0, false, true);
 
         // THEN
         Assert.assertNull(appender);
@@ -41,7 +41,7 @@ public class AppenderTest {
 
         final Appender appender = AppenderMock.createAppender("backtrace", null, null, "https://backtrace.io/", "token",
                 null, false, appVersion,
-                appName, false, 0, 0, 0, false);
+                appName, false, 0, 0, 0, false, true);
 
         // WHEN
         appender.getBacktraceClient().setCustomRequestHandler(data -> {
@@ -72,7 +72,7 @@ public class AppenderTest {
         final Waiter waiter = new Waiter();
         final Appender appender = AppenderMock.createAppender("backtrace", null, null, "https://backtrace.io/", "token",
                 null, true, null,
-                null, false, 0, 0, 0, true);
+                null, false, 0, 0, 0, true, true);
 
         appender.getBacktraceClient().setCustomRequestHandler(data -> {
             waiter.resume();

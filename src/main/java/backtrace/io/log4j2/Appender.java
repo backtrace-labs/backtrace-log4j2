@@ -98,7 +98,6 @@ public class Appender extends AbstractAppender {
             return;
         }
 
-        System.out.println("Sending report with message " + logEvent.getMessage().getFormattedMessage());
         internalLogger.debug("Sending report with message " + logEvent.getMessage().getFormattedMessage());
         BacktraceReport report = createBacktraceReport(logEvent);
         this.getBacktraceClient().send(report);
@@ -106,20 +105,17 @@ public class Appender extends AbstractAppender {
 
     @Override
     public boolean stop(long timeout, TimeUnit timeUnit) {
-        System.out.println("Stop with params " + timeout + " " + timeUnit.toString());
         System.out.println("Closing BacktraceAppender, awaiting:" + Appender.IS_AWAIT);
         internalLogger.debug("Closing BacktraceAppender, awaiting:" + Appender.IS_AWAIT);
+
         try {
-            if(Appender.IS_AWAIT) {
-                System.out.println("Await on messages..");
-            }
-                this.getBacktraceClient().await();
-//            }
             System.out.println("Closing backtrace client..");
             this.getBacktraceClient().close();
         } catch (InterruptedException e) {
             internalLogger.error("Error occurs during closing Backtrace client", e);
+            e.printStackTrace();
         }
+
         return super.stop(timeout, timeUnit);
     }
 
@@ -129,7 +125,6 @@ public class Appender extends AbstractAppender {
      */
     @Override
     public void stop() {
-        System.out.println("Stop without params");
         internalLogger.debug("Closing BacktraceAppender, awaiting:" + Appender.IS_AWAIT);
         try {
             this.getBacktraceClient().close();
@@ -171,6 +166,7 @@ public class Appender extends AbstractAppender {
                                                  boolean useDatabase, Long maxDatabaseSize,
                                                  Integer maxDatabaseRecordCount, Integer maxDatabaseRetryLimit, boolean awaitMessagesOnClose) {
         BacktraceConfig backtraceConfig = isStringNotEmpty(submissionUrl) ? new BacktraceConfig(submissionUrl) : new BacktraceConfig(endpointUrl, submissionToken);
+        backtraceConfig.setAwaitMessagesOnClose(awaitMessagesOnClose);
 
         if (!useDatabase) {
             backtraceConfig.disableDatabase();
@@ -188,9 +184,6 @@ public class Appender extends AbstractAppender {
         if (maxDatabaseRetryLimit != null) {
             backtraceConfig.setDatabaseRetryLimit(maxDatabaseRetryLimit);
         }
-
-        StatusLogger.getLogger().debug("setAwaitMessagesOnClose: " + awaitMessagesOnClose); // TODO: REMOVE IT
-        backtraceConfig.setAwaitMessagesOnClose(awaitMessagesOnClose);
 
         return backtraceConfig;
     }
