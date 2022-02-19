@@ -32,8 +32,6 @@ public class Appender extends AbstractAppender {
     private final StatusLogger internalLogger = StatusLogger.getLogger();
     private final static String ATTRIBUTE_LOGGING_LEVEL_NAME = "log_level";
 
-    public static boolean IS_AWAIT = false; // TODO: remove it
-
     protected Appender(BacktraceClient backtraceClient, String name, Filter filter, Layout<? extends Serializable> layout, boolean ignoreExceptions, Property[] properties) {
         super(name, filter, layout, ignoreExceptions, properties);
         this.backtraceClient = backtraceClient;
@@ -70,7 +68,6 @@ public class Appender extends AbstractAppender {
 
         BacktraceClient backtraceClient = Appender.createBacktraceClient(backtraceConfig, enableUncaughtExceptionHandler, appName, appVersion, uncaughtExceptionHandlerBlockThread);
 
-        Appender.IS_AWAIT = awaitMessagesOnClose; // TODO: remove it
         return new Appender(backtraceClient, name, filter, layout, true, null);
     }
 
@@ -105,15 +102,11 @@ public class Appender extends AbstractAppender {
 
     @Override
     public boolean stop(long timeout, TimeUnit timeUnit) {
-        System.out.println("Closing BacktraceAppender, awaiting:" + Appender.IS_AWAIT);
-        internalLogger.debug("Closing BacktraceAppender, awaiting:" + Appender.IS_AWAIT);
-
+        internalLogger.debug("Closing BacktraceAppender..");
         try {
-            System.out.println("Closing backtrace client..");
             this.getBacktraceClient().close();
         } catch (InterruptedException e) {
             internalLogger.error("Error occurs during closing Backtrace client", e);
-            e.printStackTrace();
         }
 
         return super.stop(timeout, timeUnit);
@@ -125,7 +118,7 @@ public class Appender extends AbstractAppender {
      */
     @Override
     public void stop() {
-        internalLogger.debug("Closing BacktraceAppender, awaiting:" + Appender.IS_AWAIT);
+        internalLogger.debug("Closing BacktraceAppender..");
         try {
             this.getBacktraceClient().close();
         } catch (InterruptedException e) {
