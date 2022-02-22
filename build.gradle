@@ -10,9 +10,6 @@ version = '0.9.4'
 
 repositories {
     mavenCentral()
-    maven {
-        url "https://oss.sonatype.org/content/repositories/comgithubbacktrace-labs-1047/"
-    }
 }
 
 task uberJar(type: Jar) {
