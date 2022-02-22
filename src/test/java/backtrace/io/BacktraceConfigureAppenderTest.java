@@ -9,18 +9,17 @@ public class BacktraceConfigureAppenderTest {
     private final int MAX_DATABASE_RECORD_COUNT = 1;
     private final long MAX_DATABASE_SIZE = 2;
     private final int MAX_RETRY_LIMIT = 3;
+    private final Boolean AWAIT_ON_CLOSE = true;
     private final String URL = "https://backtrace.io/";
 
     @Test
     public void configureConfig() {
         // GIVEN
-
         boolean useDatabase = true;
-
 
         // WHEN
         BacktraceConfig preparedConfig = AppenderMock.createBacktraceConfig(URL, null, null,
-                useDatabase, MAX_DATABASE_SIZE, MAX_DATABASE_RECORD_COUNT, MAX_RETRY_LIMIT);
+                useDatabase, MAX_DATABASE_SIZE, MAX_DATABASE_RECORD_COUNT, MAX_RETRY_LIMIT, AWAIT_ON_CLOSE);
 
         // THEN
         int actualMaxDatabaseRecordCount = preparedConfig.getDatabaseConfig().getDatabaseMaxRecordCount();
@@ -42,7 +41,7 @@ public class BacktraceConfigureAppenderTest {
 
         // WHEN
         BacktraceConfig preparedConfig = AppenderMock.createBacktraceConfig(URL, "", "",
-                useDatabase, MAX_DATABASE_SIZE, MAX_DATABASE_RECORD_COUNT, MAX_RETRY_LIMIT);
+                useDatabase, MAX_DATABASE_SIZE, MAX_DATABASE_RECORD_COUNT, MAX_RETRY_LIMIT, AWAIT_ON_CLOSE);
 
         // THEN
         boolean isDatabaseEnabled = preparedConfig.getDatabaseConfig().isDatabaseEnabled();

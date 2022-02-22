@@ -9,7 +9,7 @@
 * Gradle
 ```
 dependencies {
-    implementation 'com.github.backtrace-labs.backtrace-log4j2:backtrace-log4j2:0.9.1'
+    implementation 'com.github.backtrace-labs.backtrace-log4j2:backtrace-log4j2:0.9.4'
 }
 ```
 
@@ -18,7 +18,7 @@ dependencies {
 <dependency>
   <groupId>com.github.backtrace-labs.backtrace-log4j2</groupId>
   <artifactId>backtrace-log4j2</artifactId>
-  <version>0.9.1</version>
+  <version>0.9.4</version>
 </dependency>
 ```
 
@@ -56,6 +56,7 @@ In order to configure the BacktraceAppender, it is mandatory to set the `submiss
 - `maxDatabaseRecordCount` - integer value, number of times library will try to send the error report again if sending will finished with fail
 - `maxDatabaseRetryLimit` - integer value, maximum number of messages in database. If a limit is set, the oldest error reports will be deleted if there will be try to exceed the limit
 - `uncaughtExceptionHandlerBlockThread` - boolean value, if `true` thread should be blocked until unhandled exception will be sent
+- `awaitMessagesOnClose` - boolean value, if `true` main thread will wait until all messages will be sent before closing Backtrace Client
 
 
 # Waiting 

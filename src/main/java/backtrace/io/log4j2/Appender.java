@@ -54,7 +54,8 @@ public class Appender extends AbstractAppender {
             @PluginAttribute(value = "maxDatabaseSize", defaultLong = -1) long maxDatabaseSize, // -1 is unlimited
             @PluginAttribute(value = "maxDatabaseRecordCount", defaultInt = -1) int maxDatabaseRecordCount, // -1 is unlimited
             @PluginAttribute(value = "maxDatabaseRetryLimit", defaultInt = 3) int maxDatabaseRetryLimit,
-            @PluginAttribute(value = "uncaughtExceptionHandlerBlockThread") Boolean uncaughtExceptionHandlerBlockThread
+            @PluginAttribute(value = "uncaughtExceptionHandlerBlockThread") Boolean uncaughtExceptionHandlerBlockThread,
+            @PluginAttribute(value = "awaitMessagesOnClose") Boolean awaitMessagesOnClose
     ) {
         if (name == null) {
             LOGGER.error("No name provided for BacktraceAppender");
@@ -63,7 +64,7 @@ public class Appender extends AbstractAppender {
 
         BacktraceConfig backtraceConfig = Appender.createBacktraceConfig(submissionUrl, endpointUrl, submissionToken,
                 useDatabase, maxDatabaseSize,
-                maxDatabaseRecordCount, maxDatabaseRetryLimit);
+                maxDatabaseRecordCount, maxDatabaseRetryLimit, awaitMessagesOnClose);
 
         BacktraceClient backtraceClient = Appender.createBacktraceClient(backtraceConfig, enableUncaughtExceptionHandler, appName, appVersion, uncaughtExceptionHandlerBlockThread);
 
@@ -99,6 +100,18 @@ public class Appender extends AbstractAppender {
         this.getBacktraceClient().send(report);
     }
 
+    @Override
+    public boolean stop(long timeout, TimeUnit timeUnit) {
+        internalLogger.debug("Closing BacktraceAppender");
+        try {
+            this.getBacktraceClient().close();
+        } catch (InterruptedException e) {
+            internalLogger.error("Error occurs during closing Backtrace client", e);
+        }
+
+        return super.stop(timeout, timeUnit);
+    }
+
 
     /**
      * Close all of Backtrace library resources and wait until last of messages will be process and
@@ -107,11 +120,11 @@ public class Appender extends AbstractAppender {
     public void stop() {
         internalLogger.debug("Closing BacktraceAppender");
         try {
-            super.stop();
             this.getBacktraceClient().close();
         } catch (InterruptedException e) {
             internalLogger.error("Error occurs during closing Backtrace client", e);
         }
+        super.stop();
     }
 
 
@@ -144,8 +157,9 @@ public class Appender extends AbstractAppender {
      */
     static BacktraceConfig createBacktraceConfig(String submissionUrl, String endpointUrl, String submissionToken,
                                                  boolean useDatabase, Long maxDatabaseSize,
-                                                 Integer maxDatabaseRecordCount, Integer maxDatabaseRetryLimit) {
+                                                 Integer maxDatabaseRecordCount, Integer maxDatabaseRetryLimit, boolean awaitMessagesOnClose) {
         BacktraceConfig backtraceConfig = isStringNotEmpty(submissionUrl) ? new BacktraceConfig(submissionUrl) : new BacktraceConfig(endpointUrl, submissionToken);
+        backtraceConfig.setAwaitMessagesOnClose(awaitMessagesOnClose);
 
         if (!useDatabase) {
             backtraceConfig.disableDatabase();
