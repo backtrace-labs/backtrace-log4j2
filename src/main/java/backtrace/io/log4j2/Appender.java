@@ -102,7 +102,7 @@ public class Appender extends AbstractAppender {
 
     @Override
     public boolean stop(long timeout, TimeUnit timeUnit) {
-        internalLogger.debug("Closing BacktraceAppender..");
+        internalLogger.debug("Closing BacktraceAppender");
         try {
             this.getBacktraceClient().close();
         } catch (InterruptedException e) {
@@ -118,7 +118,7 @@ public class Appender extends AbstractAppender {
      */
     @Override
     public void stop() {
-        internalLogger.debug("Closing BacktraceAppender..");
+        internalLogger.debug("Closing BacktraceAppender");
         try {
             this.getBacktraceClient().close();
         } catch (InterruptedException e) {
