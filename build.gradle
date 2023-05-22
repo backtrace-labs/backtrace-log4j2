@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.backtrace-labs.backtrace-java:backtrace-java:0.9.5' // TODO: update to 0.9.6
+    implementation 'com.github.backtrace-labs.backtrace-java:backtrace-java:0.9.6'
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.20.0'
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.20.0'
     compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.20.0'
