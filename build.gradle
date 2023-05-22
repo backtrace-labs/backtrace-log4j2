@@ -6,17 +6,17 @@ apply from: 'publish.gradle'
 
 group = 'com.github.backtrace.io'
 
-version = '0.9.4'
+version = '0.9.6'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'com.github.backtrace-labs.backtrace-java:backtrace-java:0.9.4'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.17.1'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.17.1'
+    implementation 'com.github.backtrace-labs.backtrace-java:backtrace-java:0.9.5' // TODO: update to 0.9.6
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.20.0'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.20.0'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.20.0'
     testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
     testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
     testImplementation 'net.jodah:concurrentunit:0.4.6'
