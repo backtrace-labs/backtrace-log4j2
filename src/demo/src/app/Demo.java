@@ -12,11 +12,10 @@ public class Demo {
         Logger rootLogger = (Logger) LogManager.getRootLogger();
         Appender backtraceAppender = (Appender) rootLogger.getAppenders().get("BacktraceAppender");
 
-        try{
+        try {
             String x = null;
             x.toLowerCase();
-        }
-        catch (Exception exception){
+        } catch (Exception exception) {
             rootLogger.debug("Example message - log4j2");
         }
 
