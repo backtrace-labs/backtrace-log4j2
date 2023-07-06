@@ -1,5 +1,8 @@
 # Backtrace Log4j2 Release Notes
 
+## Version 0.9.7 - 06.07.2023
+- Update backtrace-java dependency
+
 ## Version 0.9.6 - 27.06.2023
 - Update log4j2 and backtrace-java dependencies
 
